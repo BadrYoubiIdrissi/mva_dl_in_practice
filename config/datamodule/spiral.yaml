@@ -1,0 +1,5 @@
+_target_: datamodule.spiral.SpiralDataModule
+batch_size: 10
+train_size: 4000
+val_size: 1000
+test_size: 5000
