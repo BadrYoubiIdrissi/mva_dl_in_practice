@@ -1,11 +1,11 @@
 _target_: model.custom_cnn.CustomCNNModel
 input_width: 16
-input_channels: 3
+input_channels: 1
 output_size: 10
-cnn_layers: [16]
-kernel_sizes: [5]
+cnn_layers: [16, 32]
+kernel_sizes: [3, 3]
 activ_fn: "relu"
-criterion: "bce"
+criterion: "ce"
 optimizer: 
-  _target_: torch.optim.SGD
-  lr: 0.03
+  _target_: torch.optim.Adam
+  lr: 0.01

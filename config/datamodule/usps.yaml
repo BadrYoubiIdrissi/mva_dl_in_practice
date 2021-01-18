@@ -1,3 +1,4 @@
 _target_: datamodule.usps.USPSDataModule
 data_dir: ${hydra:runtime.cwd}/USPS
 batch_size: 100 
+num_workers: 4

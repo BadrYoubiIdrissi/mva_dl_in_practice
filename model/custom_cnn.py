@@ -23,7 +23,7 @@ class CustomCNNModel(pl.LightningModule):
     def build_criterion(self, criterion):
         losses = {
                     "mse" : nn.MSELoss(),
-                    "bce" : nn.BCEWithLogitsLoss()
+                    "ce" : nn.CrossEntropyLoss()
                 }
         self.criterion = losses[criterion]
 
@@ -37,16 +37,18 @@ class CustomCNNModel(pl.LightningModule):
         cnn_layers = [input_channels]+list(cnn_layers)
         self.convs = nn.ModuleList([nn.Conv2d(cnn_layers[i], cnn_layers[i+1], kernel_sizes[i]) for i in range(len(kernel_sizes))])
         self.pool = nn.MaxPool2d(2, 2)
+        self.output_size = output_size
 
         self.featuremap_size = input_width
         for size in kernel_sizes:
             self.featuremap_size = (self.featuremap_size - (size - 1))//2
-        self.fc = nn.Linear(self.featuremap_size*cnn_layers[-1], 10)
+        self.featuremap_output_size=self.featuremap_size*self.featuremap_size*cnn_layers[-1]
+        self.fc = nn.Linear(self.featuremap_output_size, self.output_size)
 
     def forward(self, x):
         for conv_layer in self.convs:
             x = self.pool(self.activ_fn(conv_layer(x)))
-        x = x.view(-1, self.self.featuremap_size*cnn_layers[-1])
+        x = x.view(-1, self.featuremap_output_size)
         x = self.fc(x)
         return x
 
@@ -56,16 +58,16 @@ class CustomCNNModel(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        loss = self.criterion(y_hat, y.float())
+        loss = self.criterion(y_hat, y)
         self.train_acc(y_hat, y)
-        self.log("train_loss", loss)
-        self.log("train_acc", self.train_acc)
+        self.log("train_loss", loss, on_epoch=True, on_step=True)
+        self.log("train_acc", self.train_acc, on_epoch=True, on_step=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        loss = self.criterion(y_hat, y.float())
+        loss = self.criterion(y_hat, y)
         self.val_acc(y_hat, y)
         self.log("val_loss", loss)
         self.log("val_acc", self.val_acc)
@@ -73,7 +75,7 @@ class CustomCNNModel(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        loss = self.criterion(y_hat, y.float())
+        loss = self.criterion(y_hat, y)
         self.test_acc(y_hat, y)
         self.log("test_loss", loss)
         self.log("test_acc", self.test_acc)
