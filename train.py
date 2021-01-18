@@ -5,7 +5,7 @@ from torch import nn
 from torch.nn import functional as F
 import pytorch_lightning as pl
 from pytorch_lightning.metrics.functional import accuracy
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 import hydra
 from omegaconf import OmegaConf
 
@@ -16,6 +16,7 @@ def app(cfg):
     datamodule = hydra.utils.instantiate(cfg.datamodule)
     logger = hydra.utils.instantiate(cfg.logger) 
     checkpoint_callback = ModelCheckpoint(**cfg.callbacks.checkpoint)
+    earl_callback = EarlyStopping(**cfg.callbacks.early_stopping)
     trainer = pl.Trainer(logger=logger, callbacks=[checkpoint_callback], **cfg.trainer)
     logger.log_hyperparams(OmegaConf.to_container(cfg, resolve=True))
     trainer.fit(model, datamodule)
