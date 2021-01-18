@@ -3,6 +3,7 @@ trainer:
   gpus: 1
   progress_bar_refresh_rate: 100
   log_every_n_steps: 10
+  # auto_lr_find: True
 
 callbacks:
   checkpoint:
@@ -18,3 +19,4 @@ logger:
 defaults:
   - datamodule: spiral
   - model: custom_fc
+  - override hydra/launcher: ruche

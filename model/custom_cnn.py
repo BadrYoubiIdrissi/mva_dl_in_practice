@@ -8,7 +8,7 @@ from hydra.utils import instantiate
 
 class CustomCNNModel(pl.LightningModule):
 
-    def __init__(self, input_width, input_channels, output_size, cnn_layers, kernel_sizes, activ_fn, criterion, optimizer):
+    def __init__(self, input_width, input_channels, output_size, cnn_layers, kernel_sizes, activ_fn, criterion, lr, optimizer):
         super().__init__()
         
         self.build_model(input_width, input_channels, output_size, cnn_layers, kernel_sizes, activ_fn, criterion=="mse")
@@ -18,6 +18,7 @@ class CustomCNNModel(pl.LightningModule):
         self.val_acc = pl.metrics.Accuracy()
         self.test_acc = pl.metrics.Accuracy()
 
+        self.lr = lr
         self.optimizer = optimizer
 
     def build_criterion(self, criterion):
@@ -53,7 +54,12 @@ class CustomCNNModel(pl.LightningModule):
         return x
 
     def configure_optimizers(self):
-        return instantiate(self.optimizer, self.parameters())
+        optimizers = {
+            "adam": torch.optim.Adam,
+            "sgd": torch.optim.SGD
+        }
+        optimizer = optimizers[self.optimizer]
+        return optimizer(self.parameters(), lr=self.lr)
 
     def training_step(self, batch, batch_idx):
         x, y = batch

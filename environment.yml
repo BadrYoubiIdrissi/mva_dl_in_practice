@@ -16,3 +16,4 @@ dependencies:
     - plotly
     - tqdm
     - pytorch-lightning
+    - matplotlib

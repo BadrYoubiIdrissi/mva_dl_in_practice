@@ -1,0 +1,4 @@
+_target_: datamodule.usps.USPSColoredDataModule
+data_dir: ${hydra:runtime.cwd}/USPSColored
+batch_size: 100 
+num_workers: 4

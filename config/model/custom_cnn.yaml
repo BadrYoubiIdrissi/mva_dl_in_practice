@@ -6,6 +6,5 @@ cnn_layers: [16, 32]
 kernel_sizes: [3, 3]
 activ_fn: "relu"
 criterion: "ce"
-optimizer: 
-  _target_: torch.optim.Adam
-  lr: 0.01
+optimizer: "adam"
+lr: 0.01
