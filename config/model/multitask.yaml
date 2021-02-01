@@ -1,0 +1,12 @@
+_target_: model.multi_task.MultiheadModel
+input_width: 16
+input_channels: 3
+output_size: 10
+cnn_layers: [16, 32]
+layers_color: [8, 8]
+layers_digit: [8, 8]
+kernel_sizes: [3, 3]
+activ_fn: "relu"
+criterion: "ce"
+optimizer: "adam"
+lr: 0.01

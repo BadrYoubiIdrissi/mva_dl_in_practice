@@ -1,13 +1,11 @@
-defaults:
-  - submitit_slurm
-  - _self_
-
 timeout_min: 60
 cpus_per_task: 1
-gpus_per_node: 1
+gpus_per_node: 0
 tasks_per_node: 1
-mem_gb: 16
+mem_gb: 4
 name: ${hydra.job.name}
-partition: gpu
+partition: cpu_med
 array_parallelism: 4
 
+defaults:
+  - submitit_slurm
